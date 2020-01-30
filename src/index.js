@@ -2,48 +2,28 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
 import { createStore } from 'redux'
-// import Race from './component/race'
 import './component/race.css'
-
-let store = createStore(counter)
-var money = {
-  account: 10000
-}
-var eventFile = {}
-var eventBus = {
-  on(eventName, fn) {
-    if (!eventFile[eventName]) {
-      eventFile[eventName] = []
-    }
-    eventFile[eventName].push(fn)
-  },
-  trigger(eventName, props) {
-    if (eventFile[eventName]) {
-      eventFile[eventName].forEach(e => {
-        e([props])
-      })
-    }
-  },
-  init() {
-    this.on('我花钱了', number => {
-      money.account -= number
-      render()
-    })
+console.log(createStore)
+function counter(state, action) {
+  state = state || {
+    money: { account: 10000 }
+  }
+  switch (action.type) {
+    case '我花钱了':
+      return { money: { account: state.money.account - action.payload } }
+    default:
+      return state
   }
 }
-eventBus.init()
 class App extends React.Component {
   constructor() {
     super()
-    this.state = {
-      money: money
-    }
   }
   render() {
     return (
       <div className="containt">
-        <Firstfather money={this.state.money}></Firstfather>
-        <Secondfather money={this.state.money}></Secondfather>
+        <Firstfather money={this.props.store.money}></Firstfather>
+        <Secondfather money={this.props.store.money}></Secondfather>
       </div>
     )
   }
@@ -99,7 +79,7 @@ class Son3 extends React.Component {
 }
 class Son4 extends React.Component {
   cost(num) {
-    eventBus.trigger('我花钱了', num)
+    store.dispatch({ type: '我花钱了', payload: 100 })
   }
   render() {
     return (
@@ -110,9 +90,13 @@ class Son4 extends React.Component {
     )
   }
 }
-
+const store = createStore(counter)
+render()
+store.subscribe(render)
 // ========================================
 function render() {
-  ReactDOM.render(<App />, document.getElementById('root'))
+  ReactDOM.render(
+    <App store={store.getState()} />,
+    document.getElementById('root')
+  )
 }
-render()
