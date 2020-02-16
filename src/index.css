@@ -94,3 +94,15 @@ ul {
   justify-content: center;
   align-items: center;
 }
+
+.box {
+  border: 1px solid;
+}
+
+.box.green {
+  border: 1px solid green;
+}
+
+.box.blue {
+  border: 1px solid blue;
+}
